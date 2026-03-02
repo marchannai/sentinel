@@ -118,16 +118,7 @@ def _ai_analyze(symbol: str, ohlcv_text: str) -> str:
 OHLCV Data:
 {ohlcv_text}
 """
-    response = groq_client.chat.completions.create(
-        model="llama3-70b-8192",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user",   "content": user_prompt},
-        ],
-        temperature=0.2,
-        max_tokens=1024,
-    )
-    return response.choices[0].message.content.strip()
+    return _groq_chat(system_prompt, user_prompt)
 
 
 def _parse_analysis(raw: str) -> dict | None:
