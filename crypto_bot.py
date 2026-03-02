@@ -10,7 +10,6 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 import ccxt
-from groq import Groq
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -34,7 +33,24 @@ EXCHANGE_ID    = os.getenv("EXCHANGE", "binance")   # or "coinbasepro"
 
 # ── Exchange & AI clients ──────────────────────────────────────────────────────
 exchange: ccxt.Exchange = getattr(ccxt, EXCHANGE_ID)({"enableRateLimit": True})
-groq_client = Groq(api_key=GROQ_API_KEY)
+def _groq_chat(system: str, user: str) -> str:
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        "temperature": 0.2,
+        "max_tokens": 1024,
+    }
+    response = requests.post(url, headers=headers, json=payload, timeout=60)
+    response.raise_for_status()
+    return response.json()["choices"][0]["message"]["content"].strip()
 
 
 # ══════════════════════════════════════════════════════════════════════════════
