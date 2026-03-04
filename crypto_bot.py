@@ -233,86 +233,52 @@ def build_alert(symbol, d, ind, fg_val=None, fg_lbl=None, fg_e=""):
     reasons=chr(10).join(f"  • {r}" for r in d.get("reasons",[]))
     confluences=chr(10).join(f"  ✅ {c}" for c in d.get("key_confluences",[]))
     warnings=chr(10).join(f"  ⚠️ {w}" for w in d.get("warnings",[]))
-    fg_line=f"
-😱 Fear & Greed: {fg_e} {fg_val}/100 - {fg_lbl}" if fg_val else ""
+    fg_line=f"\n😱 Fear & Greed: {fg_e} {fg_val}/100 - {fg_lbl}" if fg_val else ""
     return (
         "╔══════════════════════════╗
-"
         "      🤖 AI TRADE ALERT
-"
         "╚══════════════════════════╝
-"
         f"📌 {symbol}  💰 {ind['price']:,.4f}
-"
         f"🕐 {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}{fg_line}
 
-"
         "━━━━━ 📊 MARKET ━━━━━
-"
         f"📈 Trend: {d.get('trend','N/A')} ({d.get('trend_strength','N/A')})
-"
         f"🏗 Structure: {d.get('market_structure','N/A')}
-"
         f"🧠 Sentiment: {esent} {d.get('sentiment','N/A')} ({d.get('sentiment_score','N/A')}/100)
-"
         f"🕯 Patterns: {', '.join(ind.get('patterns',['None']))}
 
-"
         "━━━━━ 📉 INDICATORS ━━━━━
-"
         f"RSI: {re2} {ind['rsi']} - {ind['rsi_s']}
-"
         f"MACD: {me} {ind['ml']}  Hist: {ind['hist']} - {ind['macd_s']}
-"
         f"Stoch: {se} {ind['stoch']} - {ind['stoch_s']}
-"
         f"BB: {ind['bbl']} / {ind['bbm']} / {ind['bbu']} - {ind['bb_s']}
-"
         f"EMA 9/21/50: {ind['e9']} / {ind['e21']} / {ind['e50']} - {ind['ema_s']}
-"
         f"VWAP: {ind['vwap']} - {ind['vwap_s']}
-"
         f"ATR: {ind['atr']}  Volume: {ind['vol']}
 
-"
         "━━━━━ 🌀 FIBONACCI ━━━━━
-"
         f"0.382: {ind['f382']}  0.5: {ind['f500']}  0.618: {ind['f618']}
-"
         f"✨ Golden Pocket: {ind['f650']} - {ind['f618']}
-"
         f"In Golden Pocket: {gp}
-"
         f"🔑 Support: {ind['sup']}  Resistance: {ind['res']}
 
-"
         "━━━━━ 🎯 TRADE SETUP ━━━━━
-"
         f"Signal: {esig}  Confidence: {ce} {conf}
-"
         f"Entry: {ts.get('entry_zone','N/A')}
-"
         f"TP1: {ts.get('take_profit_1','N/A')} 🎯
-"
         f"TP2: {ts.get('take_profit_2','N/A')} 🎯🎯
-"
         f"TP3: {ts.get('take_profit_3','N/A')} 🎯🎯🎯
-"
         f"SL: {ts.get('stop_loss','N/A')} 🛑  R:R: {ts.get('risk_reward','N/A')}
 
-"
         f"━━━━━ ✅ CONFLUENCES ━━━━━
 {confluences}
 
-"
         f"━━━━━ 💡 REASONING ━━━━━
 {reasons}
 
-"
         f"━━━━━ ⚠️ WARNINGS ━━━━━
 {warnings}
 
-"
         "⚠️ Not financial advice. Always DYOR."
     )
 
