@@ -21,7 +21,6 @@ exchange       = getattr(ccxt, EXCHANGE_ID)({"enableRateLimit": True})
 # Safe send — splits long messages automatically
 # ══════════════════════════════════════════════════════════════════════════════
 async def safe_send(update, text):
-    """Send plain text, splitting if over 4096 chars."""
     try:
         if len(text) <= 4096:
             await update.message.reply_text(text)
@@ -29,13 +28,8 @@ async def safe_send(update, text):
             for chunk in [text[i:i+4000] for i in range(0, len(text), 4000)]:
                 await update.message.reply_text(chunk)
     except Exception as e:
-        logger.error(f"safe_send error: {e}")
+        import logging; logging.getLogger(__name__).error(f"safe_send: {e}")
 
-# ══════════════════════════════════════════════════════════════════════════════
-# Persistent Storage
-# ══════════════════════════════════════════════════════════════════════════════
-DATA_DIR = Path("/app/data")
-DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 def _path(name): return DATA_DIR / f"{name}.json"
 def load_db(name):
