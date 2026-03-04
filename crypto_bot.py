@@ -225,47 +225,98 @@ def build_alert(symbol, d, ind, fg_val=None, fg_lbl=None, fg_e=""):
     ts=d.get("trade_setup",{}); sig=ts.get("signal","N/A"); conf=ts.get("confidence","N/A")
     esig="🟢 LONG" if sig=="Long" else "🔴 SHORT" if sig=="Short" else "⚪ NO TRADE"
     esent="📈" if d.get("sentiment")=="Bullish" else "📉" if d.get("sentiment")=="Bearish" else "➡️"
-    gp="✅ YES" if ind['golden'] else "❌ No"
+    gp="✅ YES" if ind["golden"] else "❌ No"
     ce="🟢" if conf=="High" else "🟡" if conf=="Medium" else "🔴"
-    re="🔴" if ind['rsi']>=70 else "🟢" if ind['rsi']<=30 else "⚪"
-    reasons="\n".join(f"  - {r}" for r in d.get("reasons",[]))
-    confluences="\n".join(f"  + {c}" for c in d.get("key_confluences",[]))
-    warnings="\n".join(f"  ! {w}" for w in d.get("warnings",[]))
-    fg_line=f"\nFear+Greed: {fg_e} {fg_val}/100 - {fg_lbl}" if fg_val else ""
+    re2="🔴" if ind["rsi"]>=70 else "🟢" if ind["rsi"]<=30 else "⚪"
+    me="📈" if ind["hist"]>0 else "📉"
+    se="🔴" if ind["stoch"]>=80 else "🟢" if ind["stoch"]<=20 else "⚪"
+    reasons=chr(10).join(f"  • {r}" for r in d.get("reasons",[]))
+    confluences=chr(10).join(f"  ✅ {c}" for c in d.get("key_confluences",[]))
+    warnings=chr(10).join(f"  ⚠️ {w}" for w in d.get("warnings",[]))
+    fg_line=f"
+😱 Fear & Greed: {fg_e} {fg_val}/100 - {fg_lbl}" if fg_val else ""
     return (
-        f"AI TRADE ALERT\n"
-        f"Symbol: {symbol} | Price: {ind['price']:,.4f}\n"
-        f"Time: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}{fg_line}\n\n"
-        f"MARKET\nTrend: {d.get('trend','N/A')} ({d.get('trend_strength','N/A')})\n"
-        f"Structure: {d.get('market_structure','N/A')}\n"
-        f"Sentiment: {esent} {d.get('sentiment','N/A')} ({d.get('sentiment_score','N/A')}/100)\n"
-        f"Patterns: {', '.join(ind.get('patterns',['None']))}\n\n"
-        f"INDICATORS\n"
-        f"RSI: {re} {ind['rsi']} - {ind['rsi_s']}\n"
-        f"MACD: {'📈' if ind['hist']>0 else '📉'} {ind['ml']} Hist:{ind['hist']} - {ind['macd_s']}\n"
-        f"Stoch: {ind['stoch']} - {ind['stoch_s']}\n"
-        f"BB: {ind['bbl']} / {ind['bbm']} / {ind['bbu']} - {ind['bb_s']}\n"
-        f"EMA 9/21/50: {ind['e9']} / {ind['e21']} / {ind['e50']} - {ind['ema_s']}\n"
-        f"VWAP: {ind['vwap']} - {ind['vwap_s']}\n"
-        f"ATR: {ind['atr']} | Volume: {ind['vol']}\n\n"
-        f"FIBONACCI\n"
-        f"0.382: {ind['f382']} | 0.5: {ind['f500']} | 0.618: {ind['f618']}\n"
-        f"Golden Pocket: {ind['f650']}-{ind['f618']} | In Pocket: {gp}\n"
-        f"Support: {ind['sup']} | Resistance: {ind['res']}\n\n"
-        f"TRADE SETUP\n"
-        f"Signal: {esig} | Confidence: {ce} {conf}\n"
-        f"Entry: {ts.get('entry_zone','N/A')}\n"
-        f"TP1: {ts.get('take_profit_1','N/A')} | TP2: {ts.get('take_profit_2','N/A')} | TP3: {ts.get('take_profit_3','N/A')}\n"
-        f"SL: {ts.get('stop_loss','N/A')} | R:R: {ts.get('risk_reward','N/A')}\n\n"
-        f"CONFLUENCES\n{confluences}\n\n"
-        f"REASONING\n{reasons}\n\n"
-        f"WARNINGS\n{warnings}\n\n"
-        f"Not financial advice. Always DYOR."
+        "╔══════════════════════════╗
+"
+        "      🤖 AI TRADE ALERT
+"
+        "╚══════════════════════════╝
+"
+        f"📌 {symbol}  💰 {ind['price']:,.4f}
+"
+        f"🕐 {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}{fg_line}
+
+"
+        "━━━━━ 📊 MARKET ━━━━━
+"
+        f"📈 Trend: {d.get('trend','N/A')} ({d.get('trend_strength','N/A')})
+"
+        f"🏗 Structure: {d.get('market_structure','N/A')}
+"
+        f"🧠 Sentiment: {esent} {d.get('sentiment','N/A')} ({d.get('sentiment_score','N/A')}/100)
+"
+        f"🕯 Patterns: {', '.join(ind.get('patterns',['None']))}
+
+"
+        "━━━━━ 📉 INDICATORS ━━━━━
+"
+        f"RSI: {re2} {ind['rsi']} - {ind['rsi_s']}
+"
+        f"MACD: {me} {ind['ml']}  Hist: {ind['hist']} - {ind['macd_s']}
+"
+        f"Stoch: {se} {ind['stoch']} - {ind['stoch_s']}
+"
+        f"BB: {ind['bbl']} / {ind['bbm']} / {ind['bbu']} - {ind['bb_s']}
+"
+        f"EMA 9/21/50: {ind['e9']} / {ind['e21']} / {ind['e50']} - {ind['ema_s']}
+"
+        f"VWAP: {ind['vwap']} - {ind['vwap_s']}
+"
+        f"ATR: {ind['atr']}  Volume: {ind['vol']}
+
+"
+        "━━━━━ 🌀 FIBONACCI ━━━━━
+"
+        f"0.382: {ind['f382']}  0.5: {ind['f500']}  0.618: {ind['f618']}
+"
+        f"✨ Golden Pocket: {ind['f650']} - {ind['f618']}
+"
+        f"In Golden Pocket: {gp}
+"
+        f"🔑 Support: {ind['sup']}  Resistance: {ind['res']}
+
+"
+        "━━━━━ 🎯 TRADE SETUP ━━━━━
+"
+        f"Signal: {esig}  Confidence: {ce} {conf}
+"
+        f"Entry: {ts.get('entry_zone','N/A')}
+"
+        f"TP1: {ts.get('take_profit_1','N/A')} 🎯
+"
+        f"TP2: {ts.get('take_profit_2','N/A')} 🎯🎯
+"
+        f"TP3: {ts.get('take_profit_3','N/A')} 🎯🎯🎯
+"
+        f"SL: {ts.get('stop_loss','N/A')} 🛑  R:R: {ts.get('risk_reward','N/A')}
+
+"
+        f"━━━━━ ✅ CONFLUENCES ━━━━━
+{confluences}
+
+"
+        f"━━━━━ 💡 REASONING ━━━━━
+{reasons}
+
+"
+        f"━━━━━ ⚠️ WARNINGS ━━━━━
+{warnings}
+
+"
+        "⚠️ Not financial advice. Always DYOR."
     )
 
-# ══════════════════════════════════════════════════════════════════════════════
-# Background monitor
-# ══════════════════════════════════════════════════════════════════════════════
+
 async def monitor_alerts(app):
     await asyncio.sleep(60)
     while True:
