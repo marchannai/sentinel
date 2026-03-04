@@ -20,21 +20,16 @@ exchange       = getattr(ccxt, EXCHANGE_ID)({"enableRateLimit": True})
 # ══════════════════════════════════════════════════════════════════════════════
 # Safe send — splits long messages automatically
 # ══════════════════════════════════════════════════════════════════════════════
-async def safe_send(update, text, parse_mode="Markdown"):
-    """Send message, splitting if over Telegram's 4096 char limit."""
+async def safe_send(update, text):
+    """Send plain text, splitting if over 4096 chars."""
     try:
         if len(text) <= 4096:
-            await update.message.reply_text(text, parse_mode=parse_mode)
+            await update.message.reply_text(text)
         else:
-            chunks = [text[i:i+4000] for i in range(0, len(text), 4000)]
-            for chunk in chunks:
-                await update.message.reply_text(chunk, parse_mode=parse_mode)
-    except TelegramError as e:
-        logger.error(f"safe_send TelegramError: {e}")
-        try:
-            await update.message.reply_text(text, parse_mode=None)
-        except Exception as e2:
-            logger.error(f"safe_send fallback failed: {e2}")
+            for chunk in [text[i:i+4000] for i in range(0, len(text), 4000)]:
+                await update.message.reply_text(chunk)
+    except Exception as e:
+        logger.error(f"safe_send error: {e}")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Persistent Storage
@@ -456,7 +451,7 @@ async def analyze_cmd(update, context):
                     "rr":ts.get("risk_reward",""),"time":datetime.utcnow().isoformat(),
                     "status":"open","result":"pending"})
                 save_trades(u,trades)
-            await safe_send(update, build_alert(symbol,parsed,ind,fg_val,fg_lbl,fg_e), parse_mode=None)
+            await safe_send(update, build_alert(symbol,parsed,ind,fg_val,fg_lbl,fg_e), )
         else:
             await update.message.reply_text(f"AI returned unexpected format:\n{raw[:500]}")
     except Exception as e:
