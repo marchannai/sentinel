@@ -1,4 +1,4 @@
-import os, logging, json, requests, asyncio
+python3 -m py_compile crypto_bot.py && echo "GOOD" || echo "BAD"import os, logging, json, requests, asyncio
 from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
