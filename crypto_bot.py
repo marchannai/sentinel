@@ -1446,7 +1446,7 @@ def main():
         ("portfolio",portfolio_cmd),("addholding",addholding_cmd),("removeholding",removeholding_cmd),
         ("settings",settings_cmd),("setrisk",setrisk_cmd),
         ("setaccount",setaccount_cmd),("account",account_cmd),("possize",possize_cmd),
-        ("autoscan",autoscan_set_cmd),
+        ("autoscan",autoscan_cmd),
     ]:
         app.add_handler(CommandHandler(cmd,fn))
     app.add_handler(CallbackQueryHandler(trade_callback,pattern=r"^t[cx]:?"))
